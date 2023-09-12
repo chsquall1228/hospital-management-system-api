@@ -14,6 +14,7 @@ interface JwtProps {
 
 export interface ConfigProps {
   port: number;
+  version: string;
   api: ApiConfigProps;
   mongodb: {
     database: MongodbConfigProps;

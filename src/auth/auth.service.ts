@@ -10,14 +10,19 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signIn(username: string, pass: string): Promise<any> {
-    const user = await this.usersService.findOneByUsername(username);
-    if (!bcrypt.compareSync(pass, user?.password)) {
-      throw new UnauthorizedException();
-    }
+  async signIn(user): Promise<any> {
     const payload = { sub: user.id, username: user.username };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
+  }
+
+  async validateUser(username: string, pass: string): Promise<any> {
+    const user = await this.usersService.findOneByUsername(username);
+    if (!bcrypt.compareSync(pass, user?.password)) {
+      const { password, ...result } = user;
+      return result;
+    }
+    return null;
   }
 }
