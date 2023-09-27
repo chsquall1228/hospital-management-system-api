@@ -5,4 +5,6 @@ export class CreateMedicineDto {
   name: string;
   @ApiProperty()
   description: string;
+  @ApiProperty()
+  sideEffects: string;
 }

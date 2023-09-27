@@ -7,12 +7,16 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { RequestPageDto } from 'src/commons/dto/request-page.dto';
+import { Pagination } from 'src/commons/dto/pagination.dto';
+import { UserDto } from './dto/user.dto';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -27,8 +31,12 @@ export class UsersController {
   }
 
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  async findAll(@Query() query: RequestPageDto) {
+    const response = new Pagination<UserDto>(
+      (await this.usersService.findAll(query)).map((item) => new UserDto(item)),
+      await this.usersService.findCount(query),
+    );
+    return response;
   }
 
   @Get(':id')

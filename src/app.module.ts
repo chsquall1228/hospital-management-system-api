@@ -7,6 +7,7 @@ import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
 import { config } from './config';
 import { MedicinesModule } from './medicines/medicines.module';
+import { MedicationRecordsModule } from './medication-records/medication-records.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { MedicinesModule } from './medicines/medicines.module';
     DatabaseModule,
     ConfigModule.forRoot({ isGlobal: true, load: [config] }),
     MedicinesModule,
+    MedicationRecordsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

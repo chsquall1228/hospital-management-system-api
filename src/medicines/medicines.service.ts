@@ -3,6 +3,7 @@ import { CreateMedicineDto } from './dto/create-medicine.dto';
 import { UpdateMedicineDto } from './dto/update-medicine.dto';
 import { Medicine } from './interfaces/medicine.interface';
 import { Model } from 'mongoose';
+import { RequestPageDto } from 'src/commons/dto/request-page.dto';
 
 @Injectable()
 export class MedicinesService {
@@ -16,8 +17,14 @@ export class MedicinesService {
     return createdMedicine.save();
   }
 
-  findAll() {
-    return this.medicineModel.find().exec();
+  findAll(query: RequestPageDto): Promise<Medicine[]> {
+    return this.medicineModel
+      .find({}, null, { limit: query.limit, skip: query.offset })
+      .exec();
+  }
+
+  findCount(query: RequestPageDto): Promise<number> {
+    return this.medicineModel.countDocuments().exec();
   }
 
   findOne(id: string) {
@@ -25,10 +32,10 @@ export class MedicinesService {
   }
 
   update(id: string, updateMedicineDto: UpdateMedicineDto) {
-    return this.medicineModel.findByIdAndUpdate(id, updateMedicineDto);
+    return this.medicineModel.findByIdAndUpdate(id, updateMedicineDto).exec();
   }
 
   remove(id: string) {
-    return this.medicineModel.findByIdAndRemove(id);
+    return this.medicineModel.findByIdAndRemove(id).exec();
   }
 }

@@ -4,6 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './interfaces/user.interface';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
+import { RequestPageDto } from 'src/commons/dto/request-page.dto';
 
 @Injectable()
 export class UsersService {
@@ -22,8 +23,14 @@ export class UsersService {
     return createdUser.save();
   }
 
-  findAll(): Promise<User[]> {
-    return this.userModel.find().exec();
+  findAll(query: RequestPageDto): Promise<User[]> {
+    return this.userModel
+      .find({}, null, { limit: query.limit, skip: query.offset })
+      .exec();
+  }
+
+  findCount(query: RequestPageDto): Promise<number> {
+    return this.userModel.countDocuments().exec();
   }
 
   findOne(id: number): Promise<User> {
@@ -35,10 +42,10 @@ export class UsersService {
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
-    return this.userModel.findByIdAndUpdate(id, updateUserDto);
+    return this.userModel.findByIdAndUpdate(id, updateUserDto).exec();
   }
 
   remove(id: number) {
-    return this.userModel.findByIdAndRemove(id);
+    return this.userModel.findByIdAndRemove(id).exec();
   }
 }

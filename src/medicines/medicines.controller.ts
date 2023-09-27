@@ -7,12 +7,16 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { MedicinesService } from './medicines.service';
 import { CreateMedicineDto } from './dto/create-medicine.dto';
 import { UpdateMedicineDto } from './dto/update-medicine.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { MedicineDto } from './dto/medicine.dto';
+import { RequestPageDto } from 'src/commons/dto/request-page.dto';
+import { Pagination } from 'src/commons/dto/pagination.dto';
 
 @ApiBearerAuth()
 @ApiTags('medicines')
@@ -27,8 +31,16 @@ export class MedicinesController {
   }
 
   @Get()
-  findAll() {
-    return this.medicinesService.findAll();
+  async findAll(
+    @Query() query: RequestPageDto,
+  ): Promise<Pagination<MedicineDto>> {
+    const response = new Pagination<MedicineDto>(
+      (await this.medicinesService.findAll(query)).map(
+        (item) => new MedicineDto(item),
+      ),
+      await this.medicinesService.findCount(query),
+    );
+    return response;
   }
 
   @Get(':id')

@@ -1,6 +1,11 @@
 import * as mongoose from 'mongoose';
 
-export const MedicineSchema = new mongoose.Schema({
-  name: String,
-  description: String,
-});
+export const MedicineSchema = new mongoose.Schema(
+  {
+    name: String,
+    description: String,
+  },
+  {
+    timestamps: true,
+  },
+);
